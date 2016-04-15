@@ -35,7 +35,7 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:background="#fd015d"
-        android:onClick="start_sending"
-        android:text="New Button"
+        android:onClick="start_scanner"
+        android:text="Start Discovery"
         android:textColor="#ffffff" />
 </LinearLayout>

@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         rssi_value_viewer = (TextView) findViewById(R.id.tv_device_info);
         answer = "";
+    }
+    void start_scanner(View v){
         adapter = BluetoothAdapter.getDefaultAdapter();
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
@@ -54,10 +56,10 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                Toast.makeText(getApplicationContext(), "Started discovery", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Started discovery", Toast.LENGTH_SHORT).show();
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 //p("finished searching for devices nearby");
-                Toast.makeText(getApplicationContext(), "Started discovery", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "finished  discovery", Toast.LENGTH_SHORT).show();
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 answer = "Device name:" + device.getName() + "\nRSSI=" + (intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE)) + "\n";
