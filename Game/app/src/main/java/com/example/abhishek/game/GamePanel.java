@@ -1,28 +1,28 @@
 package com.example.abhishek.game;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-/**
- * Created by Abhishek on 18-04-2016.
- */
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private GameThread game_thread;
-
+    Context context;
+    private Player player;
     public GamePanel(Context context) {
         super(context);
         getHolder().addCallback(this);
         game_thread=new GameThread(getHolder(),this);
-        //don't know what this does!
         setFocusable(true);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        player = new Player();
         game_thread.setRunning(true);
         game_thread.start();
+
     }
 
     @Override
@@ -32,8 +32,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        //this may cause an error.
-        //check here.
         boolean retry = true;
         while (retry) {
             try {
@@ -53,6 +51,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return super.onTouchEvent(event);
     }
 
+    @Override
+    public void draw(Canvas canvas) {
+        player.draw(canvas);
+    }
+
     public void update() {
+    }
+    public void p(String s) {
+        System.out.println("" + s);
     }
 }

@@ -24,7 +24,7 @@ public class GameThread extends Thread {
     public void run() {
         long start_time;
         long time_millis;
-        long wait_time;
+        long wait_time=100;
         long total_time = 0;
         int frame_count = 0;
         long target_time = 1000 / FPS;

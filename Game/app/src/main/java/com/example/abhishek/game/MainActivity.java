@@ -21,10 +21,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         rssi_value_viewer = (TextView) findViewById(R.id.tv_device_info);
         answer = "";
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
     }
-    void start_scanner(View v){
+
+    //called when Start scanning button is clicked.
+    void start_scanner(View v) {
         adapter = BluetoothAdapter.getDefaultAdapter();
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
@@ -72,7 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        unregisterReceiver(broadcastReceiver);
+        try {
+            unregisterReceiver(broadcastReceiver);
+        } catch (Exception e) {
+            //broadcastReceiver was not registered!
+        }
         super.onDestroy();
     }
 
