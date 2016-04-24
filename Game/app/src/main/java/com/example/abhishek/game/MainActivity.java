@@ -24,19 +24,16 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                Toast.makeText(getApplicationContext(), "Started discovery", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Started discovery", Toast.LENGTH_SHORT).show();
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                //p("finished searching for devices nearby");
-                Toast.makeText(getApplicationContext(), "finished  discovery", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "finished  discovery", Toast.LENGTH_SHORT).show();
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 short RSSI_STRENGTH = (intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
                 answer = "Device name:" + device.getName() + "\nRSSI=" + RSSI_STRENGTH + "\n";
                 cumulative_power += Math.sqrt(Math.abs((double) RSSI_STRENGTH));
                 count_rssi_values += 1;
                 BulletsAllowed += Math.floor(cumulative_power / count_rssi_values);
-                //p("Device name:" + device.getName());
-                //p("RSSI=" + intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
                 rssi_value_viewer.setText(rssi_value_viewer.getText() + "\n" + answer);
             }
         }
@@ -48,11 +45,53 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         rssi_value_viewer = (TextView) findViewById(R.id.tv_device_info);
         answer = "";
-        //finish();
+        long start_time = 0;
+        final long current_time;
+        Thread decrease_power = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    BulletsAllowed--;
+                }
+            }
+        });
+        decrease_power.start();
+
     }
     //called when Start scanning button is clicked.
     void start_scanner(View v) {
+
         adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter == null) {     //if the android device doesn't have a bluetooth device.
+            Toast.makeText(getApplicationContext(), "No bluetooth available in this device", Toast.LENGTH_LONG).show();
+        } else if (!adapter.isEnabled()) {
+            p("Trying to enable bluetooth");
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent, 1);
+        } else {
+            finally_start_scan();
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CANCELED) {
+            Toast.makeText(getApplicationContext(), "Enable bluetooth to get support", Toast.LENGTH_LONG).show();
+        }
+        finally_start_scan();
+
+    }
+
+    //scanning the vicinity for supporters
+    void finally_start_scan() {
+        Toast.makeText(getApplicationContext(), "Seeking supporters to become more VICIOUS...", Toast.LENGTH_LONG).show();
         IntentFilter filter = new IntentFilter();
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -76,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         t.start();
 
     }
-
     void start_game(View v) {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);

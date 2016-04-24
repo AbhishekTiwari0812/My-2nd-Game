@@ -17,14 +17,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
+            <TextView
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Supporters"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp" />
             <TextView
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 android:id="@+id/tv_device_info"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Information comes here"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -34,10 +40,12 @@
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:background="#fd015d"
-        android:layout_margin="10dp"
+        android:layout_marginRight="20dp"
         android:onClick="start_scanner"
         android:text="Start Discovery"
         android:textColor="#ffffff" />
@@ -47,7 +55,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center_vertical"
-        android:layout_margin="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:background="#0e01fd"
         android:onClick="start_game"
