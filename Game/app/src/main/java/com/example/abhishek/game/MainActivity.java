@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         answer = "";
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
+        finish();
     }
 
     //called when Start scanning button is clicked.
