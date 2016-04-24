@@ -18,7 +18,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     long update_delay = 125;        //screen gets refreshed every 125 millisecond
     ArrayList<Bullet> bullets_on_screen;
     int bullets_allowed;
+    static Object LOCK = new Object();
     private Enemy enemy;
+    static int draw_called;
+
     public GamePanel(Context context) {
         super(context);
         bullets_on_screen = new ArrayList<Bullet>();
@@ -57,8 +60,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //TODO: fire bullets on screen tap event.
-        int bullet_count = bullets_on_screen.size();
+        int bullet_count = 0;
+        for (int i = 0; i < bullets_on_screen.size(); i++) {
+            if (bullets_on_screen.get(i).y >= 0) {
+                bullet_count++;
+            }
+        }
         this.invalidate();
         if (bullet_count < bulletsAllowed()) {
             Bullet b = new Bullet(this.player);
@@ -71,7 +78,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     //TODO: edit this
     int bulletsAllowed() {
-        return 10;
+        int allowed = (int) (MainActivity.BulletsAllowed / 3.0);
+        if (allowed < 2)
+            allowed = 2;
+        p("Bullets allowed are:" + (MainActivity.BulletsAllowed / 3.0));
+        return allowed;
     }
     @Override
     public void draw(Canvas canvas) {
@@ -79,12 +90,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             final int saved_state = canvas.save();
             player.draw(canvas);
             enemy.draw(canvas);
-            Iterator<Bullet> iterator = bullets_on_screen.iterator();
             Bullet temp_bullet;
-            double distance_between_bullet_and_enemy;
+            for (int i = 0; i < bullets_on_screen.size(); i++) {
+                temp_bullet = bullets_on_screen.get(i);
+                double distance_be = Math.sqrt(Math.pow((double) (temp_bullet.x - enemy.x), 2) + Math.pow((double) (temp_bullet.y - enemy.y), 2));
+                if (distance_be < temp_bullet.r + enemy.r) {
+                    p("Enemy hit");
+                    enemy.changeColorTemp(canvas);
+                    temp_bullet.delete_self = true;
+                } else if (temp_bullet.y < 0) {
+                    temp_bullet.delete_self = true;
+                }
+            }
+            Iterator<Bullet> iterator = bullets_on_screen.iterator();
             while (iterator.hasNext()) {
                 iterator.next().draw(canvas);
             }
+
             canvas.restoreToCount(saved_state);
             this.invalidate(0,0,100,100);
         }

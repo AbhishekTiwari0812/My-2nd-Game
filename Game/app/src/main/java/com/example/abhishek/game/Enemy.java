@@ -9,29 +9,32 @@ import android.graphics.drawable.Drawable;
  * Created by Abhishek on 18-04-2016.
  */
 public class Enemy extends GameObject {
-    static final String ENEMY_COLOR = "#332299";
-    static final String ENEMY_HIT_COLOR = "#223399";
+    static final String ENEMY_COLOR1 = "#332299";
+    static final String ENEMY_COLOR2 = "#223399";
+    boolean is_first_color;
+
     Drawable drawable;
     int redrawn;
     int direction;
-
+    Enemy obj;
     Enemy() {
+        this.is_first_color = true;
+        obj = this;
         this.r = 60f;
         this.x = GameActivity.ScreenWidth / 2;
         this.y = this.r;
         this.direction = 1;
         this.redrawn = 0;
+        this.dx = 2;
         this.paint = new Paint();
         this.paint.setStyle(Paint.Style.FILL);
-        this.paint.setColor(Color.parseColor(this.ENEMY_COLOR));
+        this.paint.setColor(Color.parseColor(this.ENEMY_COLOR1));
     }
 
     public void draw(Canvas canvas) {
-
         this.redrawn++;
         if (redrawn > 2) {        //this decides the speed of the bullets
             this.x += (this.direction) * this.dx;
-            //this.redrawn = 0;
         }
         if ((this.x + this.r >= GameActivity.ScreenWidth) || (this.x - this.r < 0))
             this.direction *= -1;
@@ -39,13 +42,14 @@ public class Enemy extends GameObject {
         canvas.drawCircle(x, y, r, paint);
     }
 
-    void changeColorTemp() {
-        this.paint.setColor(Color.parseColor(this.ENEMY_HIT_COLOR));
-      /*  try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-        this.paint.setColor(Color.parseColor(this.ENEMY_COLOR));
+    void changeColorTemp(Canvas canvas) {
+        if (this.is_first_color) {
+            this.paint.setColor(Color.parseColor(this.ENEMY_COLOR2));
+            this.is_first_color = false;
+        } else {
+            this.is_first_color = true;
+            this.paint.setColor(Color.parseColor(this.ENEMY_COLOR1));
+        }
+
     }
 }

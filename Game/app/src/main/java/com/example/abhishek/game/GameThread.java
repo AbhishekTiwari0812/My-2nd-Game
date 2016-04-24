@@ -8,7 +8,7 @@ import android.view.SurfaceHolder;
  */
 public class GameThread extends Thread {
     static Canvas canvas;
-    final int FPS = 30;           //frames per second.
+    final int FPS = 3;           //frames per second.
     int AVG_FPS;
     GamePanel gamePanel;
     boolean running;

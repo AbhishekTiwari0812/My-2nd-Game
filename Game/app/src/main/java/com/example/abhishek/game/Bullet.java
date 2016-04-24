@@ -12,9 +12,10 @@ public class Bullet extends GameObject {
 
     Drawable drawable;
     int redrawn;
-
+    boolean delete_self;
     Bullet(Player p) {
         this.r = 5f;
+        this.delete_self = false;
         this.x = p.x;
         this.y = p.y - p.r;
         this.redrawn = 0;
@@ -29,6 +30,7 @@ public class Bullet extends GameObject {
         if (this.redrawn > 3) {        //this decides the speed of the bullets
             this.y -= this.dy;
         }
-        canvas.drawCircle(x, y, r, paint);
+            canvas.drawCircle(x, y, r, paint);
+
     }
 }

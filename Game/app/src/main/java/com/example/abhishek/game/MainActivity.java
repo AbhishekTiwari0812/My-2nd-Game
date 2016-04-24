@@ -16,19 +16,40 @@ public class MainActivity extends AppCompatActivity {
     BluetoothAdapter adapter;
     TextView rssi_value_viewer;
     String answer;
+    static int BulletsAllowed;
+    double count_rssi_values;
+    double cumulative_power;
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                Toast.makeText(getApplicationContext(), "Started discovery", Toast.LENGTH_SHORT).show();
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                //p("finished searching for devices nearby");
+                Toast.makeText(getApplicationContext(), "finished  discovery", Toast.LENGTH_SHORT).show();
+            } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                short RSSI_STRENGTH = (intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+                answer = "Device name:" + device.getName() + "\nRSSI=" + RSSI_STRENGTH + "\n";
+                cumulative_power += Math.sqrt(Math.abs((double) RSSI_STRENGTH));
+                count_rssi_values += 1;
+                BulletsAllowed += Math.floor(cumulative_power / count_rssi_values);
+                //p("Device name:" + device.getName());
+                //p("RSSI=" + intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+                rssi_value_viewer.setText(rssi_value_viewer.getText() + "\n" + answer);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         rssi_value_viewer = (TextView) findViewById(R.id.tv_device_info);
         answer = "";
-        Intent intent = new Intent(this, GameActivity.class);
-        startActivity(intent);
-        finish();
+        //finish();
     }
-
     //called when Start scanning button is clicked.
     void start_scanner(View v) {
         adapter = BluetoothAdapter.getDefaultAdapter();
@@ -56,25 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    void start_game(View v) {
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
 
-    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                Toast.makeText(getApplicationContext(), "Started discovery", Toast.LENGTH_SHORT).show();
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                //p("finished searching for devices nearby");
-                Toast.makeText(getApplicationContext(), "finished  discovery", Toast.LENGTH_SHORT).show();
-            } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                answer = "Device name:" + device.getName() + "\nRSSI=" + (intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE)) + "\n";
-                //p("Device name:" + device.getName());
-                //p("RSSI=" + intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
-                rssi_value_viewer.setText(rssi_value_viewer.getText() + "\n" + answer);
-            }
-        }
-    };
+    }
 
     @Override
     public void onDestroy() {
