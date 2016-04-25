@@ -111,7 +111,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 if (distance_be < temp_bullet.r + enemy.r) {
                     p("Enemy hit");
                     //TODO: fix this
-                    player.score++;
+                    if (!temp_bullet.delete_self)
+                        player.score++;
                     p("Player Score" + player.score);
                     enemy.changeColorTemp(canvas);
                     temp_bullet.delete_self = true;
