@@ -19,6 +19,11 @@ public class MainActivity extends AppCompatActivity {
     static int BulletsAllowed;
     double count_rssi_values;
     double cumulative_power;
+
+    /*
+    * Receives bluetooth broadcast
+     * updates the score of player
+    * */
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -28,12 +33,24 @@ public class MainActivity extends AppCompatActivity {
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 //Toast.makeText(getApplicationContext(), "finished  discovery", Toast.LENGTH_SHORT).show();
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
                 short RSSI_STRENGTH = (intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE));
+
+                RSSI_STRENGTH += (100.0);
+
                 answer = "Device name:" + device.getName() + "\nRSSI=" + RSSI_STRENGTH + "\n";
+
                 cumulative_power += Math.sqrt(Math.abs((double) RSSI_STRENGTH));
-                count_rssi_values += 1;
+
+                answer += "cumulative power" + cumulative_power + "\n";
+
+                count_rssi_values += (1.0d);
+
                 BulletsAllowed += Math.floor(cumulative_power / count_rssi_values);
+
+                p("Bullets:" + BulletsAllowed);
                 rssi_value_viewer.setText(rssi_value_viewer.getText() + "\n" + answer);
             }
         }
@@ -45,14 +62,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         rssi_value_viewer = (TextView) findViewById(R.id.tv_device_info);
         answer = "";
-        long start_time = 0;
-        final long current_time;
+        count_rssi_values = 0;
+        //starts decreasing player's score
         Thread decrease_power = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(3000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -65,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
     }
     //called when Start scanning button is clicked.
     void start_scanner(View v) {
-
         adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) {     //if the android device doesn't have a bluetooth device.
             Toast.makeText(getApplicationContext(), "No bluetooth available in this device", Toast.LENGTH_LONG).show();
@@ -79,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //after the bluetooth started
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -115,12 +132,15 @@ public class MainActivity extends AppCompatActivity {
         t.start();
 
     }
+
+    //on click listener for starting the game.
     void start_game(View v) {
         Intent intent = new Intent(this, GameActivity.class);
         startActivity(intent);
 
     }
 
+    //release the resources before destroying the app.
     @Override
     public void onDestroy() {
         try {

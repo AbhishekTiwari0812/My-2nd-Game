@@ -11,16 +11,13 @@ import java.util.Iterator;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private GameThread game_thread;
-    Context context;
     private Player player;
     long last_draw_time;
     long current_time;
     long update_delay = 125;        //screen gets refreshed every 125 millisecond
     ArrayList<Bullet> bullets_on_screen;
-    int bullets_allowed;
-    static Object LOCK = new Object();
     private Enemy enemy;
-    static int draw_called;
+
 
     public GamePanel(Context context) {
         super(context);
@@ -29,6 +26,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         game_thread=new GameThread(getHolder(),this);
         setFocusable(true);
     }
+    /*
+    * initializes the objects in the game.
+    * Uses the LOCKED view to eliminate concurrent thread excetions
+    *  @param holder: holder for the game view
+    */
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -49,6 +51,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         boolean retry = true;
         while (retry) {
             try {
+                //stopping the game when the surface is destroyed
+                //called when onBackPressed() is called implicitly.
                 game_thread.setRunning(false);
                 game_thread.join();
                 retry = false;
@@ -58,8 +62,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //if user taps on the screen , check whether extra bullets are allowed.
+        //if allowed, create new bullet.
         int bullet_count = 0;
         for (int i = 0; i < bullets_on_screen.size(); i++) {
             if (bullets_on_screen.get(i).y >= 0) {
@@ -76,14 +83,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    //TODO: edit this
+    /*
+     *uses the static var BulletsAllowed being computed by the broadcast receiver in MainActivity.
+     * @param void
+     * @return limit on the number of bullets on the screen
+    */
     int bulletsAllowed() {
-        int allowed = (int) (MainActivity.BulletsAllowed / 3.0);
+        int allowed = (int) (MainActivity.BulletsAllowed);
         if (allowed < 2)
             allowed = 2;
-        p("Bullets allowed are:" + (MainActivity.BulletsAllowed / 3.0));
+        p("Bullets allowed are:" + MainActivity.BulletsAllowed);
         return allowed;
     }
+
+
+    //TODO: remove the warning
     @Override
     public void draw(Canvas canvas) {
         if (canvas != null) {
@@ -96,6 +110,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 double distance_be = Math.sqrt(Math.pow((double) (temp_bullet.x - enemy.x), 2) + Math.pow((double) (temp_bullet.y - enemy.y), 2));
                 if (distance_be < temp_bullet.r + enemy.r) {
                     p("Enemy hit");
+                    //TODO: fix this
+                    player.score++;
+                    p("Player Score" + player.score);
                     enemy.changeColorTemp(canvas);
                     temp_bullet.delete_self = true;
                 } else if (temp_bullet.y < 0) {

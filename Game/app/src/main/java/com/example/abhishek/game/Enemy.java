@@ -20,12 +20,12 @@ public class Enemy extends GameObject {
     Enemy() {
         this.is_first_color = true;
         obj = this;
-        this.r = 60f;
+        this.r = 50f;
         this.x = GameActivity.ScreenWidth / 2;
         this.y = this.r;
         this.direction = 1;
         this.redrawn = 0;
-        this.dx = 2;
+        this.dx = 3;
         this.paint = new Paint();
         this.paint.setStyle(Paint.Style.FILL);
         this.paint.setColor(Color.parseColor(this.ENEMY_COLOR1));
@@ -33,9 +33,9 @@ public class Enemy extends GameObject {
 
     public void draw(Canvas canvas) {
         this.redrawn++;
-        if (redrawn > 2) {        //this decides the speed of the bullets
+        //  if (redrawn > 2) {        //this decides the speed of the bullets
             this.x += (this.direction) * this.dx;
-        }
+        // }
         if ((this.x + this.r >= GameActivity.ScreenWidth) || (this.x - this.r < 0))
             this.direction *= -1;
 

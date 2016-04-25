@@ -8,7 +8,7 @@ import android.view.SurfaceHolder;
  */
 public class GameThread extends Thread {
     static Canvas canvas;
-    final int FPS = 3;           //frames per second.
+    final int FPS = 10;           //frames drawn  per second.
     int AVG_FPS;
     GamePanel gamePanel;
     boolean running;
@@ -20,6 +20,7 @@ public class GameThread extends Thread {
         this.gamePanel = gamePanel;
     }
 
+    //main game thread
     @Override
     public void run() {
         long start_time;
@@ -34,7 +35,9 @@ public class GameThread extends Thread {
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
+                    //first update the information of objects in the game
                     this.gamePanel.update();
+                    //then draw it in the view
                     this.gamePanel.draw(canvas);
                 }
 
