@@ -42,6 +42,9 @@ public class Enemy extends GameObject {
         canvas.drawCircle(x, y, r, paint);
     }
 
+    //TODO: remove the concurrency problem
+    //changes the color of the enemy temporarily.
+
     void changeColorTemp(Canvas canvas) {
         if (this.is_first_color) {
             this.paint.setColor(Color.parseColor(this.ENEMY_COLOR2));

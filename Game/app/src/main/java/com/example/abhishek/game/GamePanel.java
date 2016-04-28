@@ -110,7 +110,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 double distance_be = Math.sqrt(Math.pow((double) (temp_bullet.x - enemy.x), 2) + Math.pow((double) (temp_bullet.y - enemy.y), 2));
                 if (distance_be < temp_bullet.r + enemy.r) {
                     p("Enemy hit");
-                    //TODO: fix this
                     if (!temp_bullet.delete_self)
                         player.score++;
                     p("Player Score" + player.score);
@@ -131,6 +130,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
+    //TODO: complete this for updating the objects properly
+    // and to make the project modular
     public void update() {
         //TODO: check whether there's a collision
         //if yes, remove the bullet from the screen
@@ -141,7 +142,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
 
     }
+    //for debugging only
     public void p(String s) {
+
         System.out.println("" + s);
     }
 }

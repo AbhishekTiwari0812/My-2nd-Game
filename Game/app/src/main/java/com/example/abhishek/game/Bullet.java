@@ -28,6 +28,8 @@ public class Bullet extends GameObject {
         //if (this.redrawn > 3) {        //this decides the speed of the bullets
             this.y -= this.dy;
         //}
+        //if the bullet is not deleted, draw this.
+        //deleted when off screen or hit the enemy
         if (!this.delete_self)
             canvas.drawCircle(x, y, r, paint);
 

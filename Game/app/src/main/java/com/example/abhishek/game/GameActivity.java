@@ -16,18 +16,17 @@ import android.view.WindowManager;
 public class GameActivity extends AppCompatActivity {
     static float ScreenWidth;
     static float ScreenHeight;
+
+    //starting the game
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //converting to the full screen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(new GamePanel(this));
-        ActionBar a = getSupportActionBar();
-        if (a != null)
-            a.hide();
-
-        Point size = new Point();
         WindowManager w = getWindowManager();
+        //screen width and height of the view.
+        Point size = new Point();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             w.getDefaultDisplay().getSize(size);
             ScreenWidth = size.x;
@@ -37,6 +36,12 @@ public class GameActivity extends AppCompatActivity {
             ScreenWidth = d.getWidth();
             ScreenHeight = d.getHeight();
         }
+
+        //the game view is starting here
+        setContentView(new GamePanel(this));
+        ActionBar a = getSupportActionBar();
+        if (a != null)
+            a.hide();
 
     }
 
